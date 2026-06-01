@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground: 26 26 26;
+  --background: 251 248 244;
+}
+
+html, body {
+  color: rgb(var(--foreground));
+  background: rgb(var(--background));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Editorial heading kerning */
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+}
+
+/* Subtle radial glow behind the hero */
+.hero-glow::before,
+.hero-glow::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+  z-index: 0;
+}
+.hero-glow::before {
+  top: -120px;
+  right: -80px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(177, 18, 38, 0.10), transparent 70%);
+}
+.hero-glow::after {
+  bottom: -160px;
+  left: -120px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(212, 143, 40, 0.08), transparent 70%);
+}
+
+/* Inputs */
+.input {
+  @apply w-full rounded-xl border border-cream-300 bg-cream-50/70 px-3.5 py-2.5 text-sm text-cream-900 placeholder-cream-400
+         focus:outline-none focus:ring-2 focus:ring-maple-500/40 focus:border-maple-500 transition;
+}
+.label {
+  @apply block text-[11px] font-medium text-cream-600 tracking-wider mb-1.5;
+}
