@@ -2,26 +2,28 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { copy, type Lang } from "@/app/copy";
 
 const PROVINCES = [
-  { code: "AB", name: "Alberta" },
-  { code: "BC", name: "British Columbia" },
-  { code: "MB", name: "Manitoba" },
-  { code: "NB", name: "New Brunswick" },
-  { code: "NL", name: "Newfoundland and Labrador" },
-  { code: "NS", name: "Nova Scotia" },
-  { code: "NT", name: "Northwest Territories" },
-  { code: "NU", name: "Nunavut" },
-  { code: "ON", name: "Ontario" },
-  { code: "PE", name: "Prince Edward Island" },
-  { code: "QC", name: "Quebec" },
-  { code: "SK", name: "Saskatchewan" },
-  { code: "YT", name: "Yukon" },
+  { code: "AB", en: "Alberta", fr: "Alberta" },
+  { code: "BC", en: "British Columbia", fr: "Colombie-Britannique" },
+  { code: "MB", en: "Manitoba", fr: "Manitoba" },
+  { code: "NB", en: "New Brunswick", fr: "Nouveau-Brunswick" },
+  { code: "NL", en: "Newfoundland and Labrador", fr: "Terre-Neuve-et-Labrador" },
+  { code: "NS", en: "Nova Scotia", fr: "Nouvelle-Écosse" },
+  { code: "NT", en: "Northwest Territories", fr: "Territoires du Nord-Ouest" },
+  { code: "NU", en: "Nunavut", fr: "Nunavut" },
+  { code: "ON", en: "Ontario", fr: "Ontario" },
+  { code: "PE", en: "Prince Edward Island", fr: "Île-du-Prince-Édouard" },
+  { code: "QC", en: "Quebec", fr: "Québec" },
+  { code: "SK", en: "Saskatchewan", fr: "Saskatchewan" },
+  { code: "YT", en: "Yukon", fr: "Yukon" },
 ];
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export default function SignupForm() {
+export default function SignupForm({ lang = "en" }: { lang?: Lang }) {
+  const t = copy[lang].form;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [province, setProvince] = useState("");
@@ -35,7 +37,7 @@ export default function SignupForm() {
 
     if (!name.trim() || !email.trim() || !province) {
       setStatus("error");
-      setErrorMsg("Please fill out every field.");
+      setErrorMsg(t.errorFill);
       return;
     }
 
@@ -63,7 +65,7 @@ export default function SignupForm() {
     } catch (err: any) {
       console.error(err);
       setStatus("error");
-      setErrorMsg(err?.message || "Something went wrong. Try again, or email hello@maplecub.ca.");
+      setErrorMsg(err?.message || t.errorGeneric);
     }
   }
 
@@ -73,10 +75,8 @@ export default function SignupForm() {
         <div className="w-10 h-10 rounded-full bg-maple-600 text-white mx-auto flex items-center justify-center mb-2">
           <i className="ti ti-check text-lg" aria-hidden="true" />
         </div>
-        <p className="font-medium text-maple-700">You&apos;re on the list.</p>
-        <p className="text-sm text-cream-700 mt-1">
-          We&apos;ll email you the moment MapleCub launches in your province.
-        </p>
+        <p className="font-medium text-maple-700">{t.successTitle}</p>
+        <p className="text-sm text-cream-700 mt-1">{t.successBody}</p>
       </div>
     );
   }
@@ -84,34 +84,34 @@ export default function SignupForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-3.5">
       <div>
-        <label htmlFor="name" className="label">YOUR NAME</label>
+        <label htmlFor="name" className="label">{t.name}</label>
         <input
           id="name" type="text" required autoComplete="name"
           value={name} onChange={(e) => setName(e.target.value)}
-          placeholder="Alex Tremblay" className="input"
+          placeholder={t.namePlaceholder} className="input"
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="label">EMAIL</label>
+        <label htmlFor="email" className="label">{t.email}</label>
         <input
           id="email" type="email" required autoComplete="email"
           value={email} onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com" className="input"
+          placeholder={t.emailPlaceholder} className="input"
         />
       </div>
 
       <div>
-        <label htmlFor="province" className="label">PROVINCE / TERRITORY</label>
+        <label htmlFor="province" className="label">{t.province}</label>
         <div className="relative">
           <select
             id="province" required value={province}
             onChange={(e) => setProvince(e.target.value)}
             className="input appearance-none pr-10"
           >
-            <option value="" disabled>Select your province…</option>
+            <option value="" disabled>{t.provincePlaceholder}</option>
             {PROVINCES.map((p) => (
-              <option key={p.code} value={p.code}>{p.name}</option>
+              <option key={p.code} value={p.code}>{lang === "fr" ? p.fr : p.en}</option>
             ))}
           </select>
           <i
@@ -132,7 +132,7 @@ export default function SignupForm() {
         disabled={status === "submitting"}
         className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-maple-600 hover:bg-maple-700 disabled:bg-maple-300 text-white font-medium py-3 text-sm transition-colors"
       >
-        {status === "submitting" ? "Reserving your spot…" : "Reserve my spot"}
+        {status === "submitting" ? t.submitting : t.submit}
         {status !== "submitting" && <i className="ti ti-arrow-right text-base" aria-hidden="true" />}
       </button>
     </form>
